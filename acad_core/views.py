@@ -75,6 +75,8 @@ class RegisterAPIView(GenericAPIView):
             f"/api/auth/verify-email?token={verification_token}"
         )
 
+        # In production, send the verification link via email.
+
         return Response(
             {
                 "message": "User created. copy the verification link below and paste it in your browser to verify your email.",

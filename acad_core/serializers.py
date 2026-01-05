@@ -105,16 +105,6 @@ class ExamCreateSerializer(serializers.ModelSerializer):
 
 
 
-    # def create(self, validated_data):
-    #     user = self.context["request"].user
-    #     exam, created = Exam.objects.get_or_create(
-    #         created_by=user,
-    #         title=validated_data["title"],
-    #         course=validated_data["course"],
-    #         defaults=validated_data,
-    #     )
-    #     return exam
-
 
 
 
