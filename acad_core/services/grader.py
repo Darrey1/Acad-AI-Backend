@@ -41,6 +41,8 @@ class MockGrader(BaseGrader):
             return float(question.max_score), "Correct"
         return 0.0, "Incorrect"
 
+
+
     def _score_short_or_essay(self, answer: Answer, question: Question):
         # simple token-overlap cosine similarity between student answer and reference_answer
         ref = question.reference_answer or ""
@@ -65,6 +67,8 @@ class MockGrader(BaseGrader):
         score = float(sim) * float(question.max_score)
         feedback = f"Similarity {sim:.2f}"
         return round(score, 2), feedback
+
+
 
     def grade_submission(self, submission: Submission):
         # fetch submission with answers and related questions & choices
@@ -108,7 +112,7 @@ class MockGrader(BaseGrader):
 
 
 
-# LLM adapter (skeleton)
+# LLM adapter 
 class LLMGrader(BaseGrader):
     name = 'llm'
     version = '0.1'
@@ -117,7 +121,7 @@ class LLMGrader(BaseGrader):
         self.llm_client = llm_client or self._build_client()
 
     def _build_client(self):
-        # placeholder -- build a client using openai or other SDK
+        # build a client using openai 
         return None
 
     def grade_submission(self, submission: Submission):
@@ -134,4 +138,4 @@ class LLMGrader(BaseGrader):
         # 3) Call LLM
         # 4) Parse JSON response
         # 5) Persist scores & feedback
-        raise NotImplementedError("LLMGrader is an adapter skeleton. Implement with your provider of choice.")
+        raise NotImplementedError("LLMGrader is an adapter skeleton. please continue with mock implementation...")

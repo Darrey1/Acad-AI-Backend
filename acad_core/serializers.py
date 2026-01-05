@@ -269,11 +269,11 @@ class SubmissionCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Exam does not exist.")
 
         # check exam availability
-        # now = timezone.now()
-        # if exam.start_at and exam.start_at > now:
-        #     raise serializers.ValidationError("Exam not yet available.")
-        # if exam.end_at and exam.end_at < now:
-        #     raise serializers.ValidationError("Exam has ended.")
+        now = timezone.now()
+        if exam.start_at and exam.start_at > now:
+            raise serializers.ValidationError("Exam not yet available.")
+        if exam.end_at and exam.end_at < now:
+            raise serializers.ValidationError("Exam has ended.")
     
 
         # check duplicate submission
@@ -328,7 +328,7 @@ class SubmissionCreateSerializer(serializers.Serializer):
             from .services import grade_submission
             grade_result = grade_submission(submission.id)
             submission_id = submission.id
-            # grade_result is dict with total_score, per_question
+            # grade_result is dict with overall_score, per_question
             submission.score = grade_result.get('score')
             submission.grading_details = grade_result
             submission.status = Submission.Status.GRADED
@@ -343,7 +343,7 @@ class SubmissionCreateSerializer(serializers.Serializer):
                 'submitted_at': submission.submitted_at,
                 'score': submission.score,
                 'max_score': round(grade_result.get('max_score', 0), 2),
-                'total_score': f'{submission.score} / {round(grade_result.get("max_score", 0), 2)}',
+                'overall_score': f'{submission.score} / {round(grade_result.get("max_score", 0), 2)}',
                 **submission.grading_details,
             }
 
