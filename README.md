@@ -34,7 +34,6 @@ This project simulates the core functionality of an academic assessment engine, 
   - [Authentication & email verification](#authentication--email-verification)
   - [API documentation](#api-documentation)
   - [Testing](#testing)
-  - [Contributing](#contributing)
   - [License](#license)
 
   ## Features
@@ -90,8 +89,8 @@ This project simulates the core functionality of an academic assessment engine, 
   - SECRET_KEY
   - DEBUG (True/False)
   - DOMAIN (optional)
-  - GRADER (defaults to `mock`)
-  - OPENAI_API_KEY
+  - GRADER (defaults to `mock`)  supported 'mock' | 'llm'
+  - OPENAI_API_KEY  (optional only if you choose llm for the GRADER)
 
   For production, configure DATABASE settings for PostgreSQL and ensure
   EMAIL settings are set so verification emails can be sent.
@@ -155,7 +154,7 @@ This project simulates the core functionality of an academic assessment engine, 
   - In production: send verification emails asynchronously (Celery / background
     task) and never return verification tokens in API responses.
 
-    
+
 
   ## API documentation
 
