@@ -40,7 +40,7 @@ This project simulates the core functionality of an academic assessment engine, 
   ### Student Exam Flow
   The following illustrates how a student interacts with the system:
 
-  ```mermaid
+  ```
   Flow:
 
   1. UI displays all available exams (ENDPOINT: GET /api/user/exams/)  ----> PAGE 1
