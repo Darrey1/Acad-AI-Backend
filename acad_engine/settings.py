@@ -127,7 +127,11 @@ Flow:
 5. Frontend fetches questions from backend and randomizes them
 6. Student answers questions one by one (Next button) ----> PAGE 4
 7. Submit button posts answers for grading (ENDPOINT: POST /api/user/exams/{exam_id}/submit/) ----> PAGE 5
-8. Frontend use timer to wait and displays score and feedback (ENDPOINT: GET /api/user/exams/{exam_id}/results/)
+8. Upon submission, backend grades answers asynchronously and return it immediately
+9. Frontend use timer to wait and displays score and feedback
+
+
+You can retrieve student results using the following endpoint anytime:- **GET /api/user/exams/{exam_id}/results/**
 
 ```
 

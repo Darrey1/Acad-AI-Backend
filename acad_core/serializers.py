@@ -334,10 +334,10 @@ class SubmissionCreateSerializer(serializers.Serializer):
                 'exam_id': exam.id,
                 'student_id': student.id,
                 'submitted_at': submission.submitted_at,
-                # 'score': submission.score,
-                # 'max_score': round(grade_result.get('max_score', 0), 2),
-                # 'overall_score': f'{submission.score} / {round(grade_result.get("max_score", 0), 2)}',
-                # **submission.grading_details,
+                'score': submission.score,
+                'max_score': round(grade_result.get('max_score', 0), 2),
+                'overall_score': f'{submission.score} / {round(grade_result.get("max_score", 0), 2)}',
+                **submission.grading_details,
             }
 
             return data
