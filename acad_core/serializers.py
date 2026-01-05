@@ -111,7 +111,7 @@ class ExamCreateSerializer(serializers.ModelSerializer):
 
 
 
-class ChoiceSerializer(serializers.ModelSerializer):
+class QuestionChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
         fields = ["text", "is_correct"]
@@ -119,7 +119,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
 
 class QuestionBulkSerializer(serializers.ModelSerializer):
-    choices = ChoiceSerializer(many=True, required=False)
+    choices = QuestionChoiceSerializer(many=True, required=False)
 
     class Meta:
         model = Question
@@ -191,6 +191,9 @@ class BulkQuestionCreateSerializer(serializers.Serializer):
             "created": len(created_questions),
             "skipped": len(questions_data) - len(created_questions),
         }
+
+
+
 
 
 
@@ -327,14 +330,14 @@ class SubmissionCreateSerializer(serializers.Serializer):
 
             data = {
                 'submission_id': submission_id,
-                "message": "Exam submitted and graded successfully",
+                "message": "Exam submitted your score will be available shortly.",
                 'exam_id': exam.id,
                 'student_id': student.id,
                 'submitted_at': submission.submitted_at,
-                'score': submission.score,
-                'max_score': round(grade_result.get('max_score', 0), 2),
-                'overall_score': f'{submission.score} / {round(grade_result.get("max_score", 0), 2)}',
-                **submission.grading_details,
+                # 'score': submission.score,
+                # 'max_score': round(grade_result.get('max_score', 0), 2),
+                # 'overall_score': f'{submission.score} / {round(grade_result.get("max_score", 0), 2)}',
+                # **submission.grading_details,
             }
 
             return data
@@ -365,26 +368,6 @@ class ExamPlayQuestionSerializer(serializers.ModelSerializer):
 
 
 
-class ChoiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Choice
-        fields = ["id", "text"]
-
-
-
-class QuestionSerializer(serializers.ModelSerializer):
-    choices = ChoiceSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Question
-        fields = [
-            "id",
-            "text",
-            "type",
-            "max_score",
-            "metadata",
-            "choices",
-        ]
 
 
 class ExamDetailsSerializer(serializers.ModelSerializer):

@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG") or False
 
-ALLOWED_HOSTS = [domain]  # use ["*"] to allow all in development
+ALLOWED_HOSTS = ["*"] #[domain]  # use ["*"] to allow all in development
 
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -112,6 +112,28 @@ The grading logic is modular and extensible. Depending on configuration, the sys
 This design allows future grading strategies to be introduced without modifying core logic.
 
 ---
+
+
+### Student Exam Flow
+The following illustrates how a student interacts with the system:
+
+```mermaid
+Flow:
+
+1. UI displays all available exams (ENDPOINT: GET /api/user/exams/)  ----> PAGE 1
+2. Student selects the exam they want to take 
+3. UI displays exam details with Start button (ENDPOINT: GET /api/user/exams/{exam_id}/) ----> PAGE 2
+4. Student clicks Start button (ENDPOINT: POST /api/user/exams/{exam_id}/start/) ----> PAGE 3
+5. Frontend fetches questions from backend and randomizes them
+6. Student answers questions one by one (Next button) ----> PAGE 4
+7. Submit button posts answers for grading (ENDPOINT: POST /api/user/exams/{exam_id}/submit/) ----> PAGE 5
+8. Frontend use timer to wait and displays score and feedback (ENDPOINT: GET /api/user/exams/{exam_id}/results/)
+
+```
+
+
+
+
 
 ### Authentication & Authorization
 This API uses **Bearer Token Authentication**.

@@ -36,6 +36,24 @@ This project simulates the core functionality of an academic assessment engine, 
   - [Testing](#testing)
   - [License](#license)
 
+
+  ### Student Exam Flow
+  The following illustrates how a student interacts with the system:
+
+  ```mermaid
+  Flow:
+
+  1. UI displays all available exams (ENDPOINT: GET /api/user/exams/)  ----> PAGE 1
+  2. Student selects the exam they want to take 
+  3. UI displays exam details with Start button (ENDPOINT: GET /api/user/exams/{exam_id}/) ----> PAGE 2
+  4. Student clicks Start button (ENDPOINT: POST /api/user/exams/{exam_id}/start/) ----> PAGE 3
+  5. Frontend fetches questions from backend and randomizes them
+  6. Student answers questions one by one (Next button) ----> PAGE 4
+  7. Submit button posts answers for grading (ENDPOINT: POST /api/user/exams/{exam_id}/submit/) ----> PAGE 5
+  8. Frontend use timer to wait and displays score and feedback (ENDPOINT: GET /api/user/exams/{exam_id}/results/)
+
+  ```
+
   ## Features
 
   - Admin UI for managing exams and questions

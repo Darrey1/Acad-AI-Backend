@@ -496,10 +496,10 @@ class ExamViewSet(ViewSet):
 
         return Response(data)
 
-    @action(detail=True, methods=["get"], url_path="submissions", url_name="exam-submissions")
-    def submissions(self, request, pk=None):
+    @action(detail=True, methods=["get"], url_path="results", url_name="exam-results")
+    def results(self, request, pk=None):
         """
-        API view to retrieve submissions of a specific exam.
+        API view to retrieve results of a specific exam.
         """
         submission = get_object_or_404(
                 Submission,
@@ -509,7 +509,7 @@ class ExamViewSet(ViewSet):
 
 
         return Response({
-            'id': submission.id,
+            'submission_id': submission.id,
             'exam_id': submission.exam_id,
             'student_id': submission.student_id,
             'status': submission.status,
