@@ -1,0 +1,14 @@
+asgiref==3.11.0
+Django==6.0
+sqlparse==0.5.5
+djangorestframework
+djangorestframework-simplejwt
+drf-spectacular
+Pillow
+psycopg2-binary
+google-generativeai
+openai
+python-multipart
+django-cors-headers
+python-dotenv
+whitenoise
