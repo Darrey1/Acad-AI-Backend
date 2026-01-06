@@ -56,10 +56,14 @@ This project simulates the core functionality of an academic assessment engine, 
 
   Once grading is completed, backend returns final score, per-question feedback, and grading details, which are displayed to the student
 
-  NOTE: The entire flow is secured via token-based authentication. Students can only access their own exams and submissions.
-  The exam questions must be randomized on the frontend for each start to minimize cheating, likewise the exam duration should be enforced on the frontend so that it auto-submits when time elapses. These aspects are outside the scope of the backend API but are critical for a production-ready assessment system.
+  Note:
+  The entire assessment flow is secured using token-based authentication (see /docs). Students are strictly restricted to accessing only their own exams, submissions, and results.
 
-  Frontend should use started_at and end_at or exam duration to implement countdown timer for exam completion.
+  To reduce the risk of cheating, exam questions should be randomized on the frontend each time an exam is started. Additionally, exam duration must be enforced on the frontend by implementing an automatic submission when the allotted time expires. While these behaviors are outside the scope of the backend API, they are essential for a production-ready assessment system.
+
+  The frontend should rely on started_at and end_at (or the exam duration) provided by the backend to implement a countdown timer for exam completion.
+
+  This is critical because the backend will reject any submission that exceeds the assigned exam end time.
 
 ```
 
