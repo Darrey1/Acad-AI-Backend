@@ -1,8 +1,9 @@
 from django.conf import settings
 
 def _get_backend():
-    backend = getattr(settings, 'GRADER_BACKEND', 'mock')
-    return backend
+    # backend = getattr(settings, 'GRADER_BACKEND', 'mock')
+    # return backend
+    return "mock" # for now, only mock is implemented
 
 def grade_submission(submission_id):
     from .grader import MockGrader, LLMGrader

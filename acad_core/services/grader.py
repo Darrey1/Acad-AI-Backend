@@ -93,6 +93,7 @@ class MockGrader(BaseGrader):
                     'question_id': q.id,
                     'score': score,
                     'max_score': float(q.max_score),
+                    # "answer_text": ans.answer_text,
                     'feedback': fb
                 })
 
@@ -101,14 +102,16 @@ class MockGrader(BaseGrader):
             submission.status = Submission.Status.GRADED
             submission.graded_at = timezone.now()
             submission.grading_details = {
-                'score': submission.score,
-                'max_score': round(max_score, 2),
+                'total_marks': round(max_score, 2),
                 'per_question': per_question,
                 'grader': {'name': self.name, 'version': self.version}
             }
             submission.save(update_fields=['score', 'status', 'graded_at', 'grading_details'])
 
         return submission.grading_details
+
+
+
 
 
 
@@ -138,4 +141,4 @@ class LLMGrader(BaseGrader):
         # 3) Call LLM
         # 4) Parse JSON response
         # 5) Persist scores & feedback
-        raise NotImplementedError("LLMGrader is an adapter skeleton. please continue with mock implementation...")
+        raise NotImplementedError("LLMGrader is an adapter skeleton and not ready yet. please continue with mock implementation...")

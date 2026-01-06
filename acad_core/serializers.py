@@ -272,7 +272,7 @@ class SubmissionCreateSerializer(serializers.Serializer):
         # check duplicate submission
         student = request.user
         if Submission.objects.filter(student=student, exam=exam).exists():
-            raise serializers.ValidationError("This exam has already been submitted and graded.")
+            raise serializers.ValidationError("This exam has already been submitted.")
 
         question_ids = [q['question_id'] for q in data['answers']]
         # ensure all question ids belong to the exam

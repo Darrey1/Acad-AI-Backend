@@ -9,10 +9,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 domain = os.getenv("DOMAIN")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY in the environment variable is not set.")
 
 DEBUG = os.getenv("DEBUG") or False
 
-ALLOWED_HOSTS = ["*"] #[domain]  # use ["*"] to allow all in development
+
+if domain:
+    ALLOWED_HOSTS = [domain]
+else:
+    ALLOWED_HOSTS = ["*"]
 
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -123,8 +129,8 @@ Flow:
 1. UI displays all available exams (ENDPOINT: GET /api/user/exams/)  ----> PAGE 1
 2. Student selects the exam they want to take 
 3. UI displays exam details with Start button (ENDPOINT: GET /api/user/exams/{exam_id}/) ----> PAGE 2
-4. Student clicks Start button 
-5. Frontend fetches questions from backend and randomizes them (ENDPOINT: POST /api/user/exams/{exam_id}/start/) ----> PAGE 3
+4. Student clicks Start button to begin the exam
+5. Frontend fetches exam questions from backend and randomizes them (ENDPOINT: POST /api/user/exams/{exam_id}/start/) ----> PAGE 3
 6. Student answers questions one by one (Next/Previous button to navigate each question) ----> PAGE 4
 7. Student clicks Submit button to submit answers for grading (ENDPOINT: POST /api/user/exams/{exam_id}/submit/) ----> PAGE 5
 8. Backend immediately stores the submission and returns a response with submission status = SUBMITTED, while grading runs asynchronously in the background
@@ -132,6 +138,11 @@ Flow:
 10.Frontend periodically checks if grading is completed (ENDPOINT: GET /api/user/exams/{exam_id}/results/)
 
 Once grading is completed, backend returns final score, per-question feedback, and grading details, which are displayed to the student
+
+NOTE: The entire flow is secured via token-based authentication. Students can only access their own exams and submissions.
+The exam questions must be randomized on the frontend for each start to minimize cheating, likewise the exam duration should be enforced on the frontend so that it auto-submits when time elapses. These aspects are outside the scope of the backend API but are critical for a production-ready assessment system.
+
+Frontend should use started_at and end_at or exam duration to implement countdown timer for exam completion.
 
 ```
 

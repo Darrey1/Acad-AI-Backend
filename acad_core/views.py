@@ -32,6 +32,7 @@ from .serializers import (
     LoginResponseSerializer,
 )
 from drf_spectacular.utils import extend_schema
+from threading import Thread
 
 
 User = get_user_model()
@@ -526,25 +527,17 @@ class ExamViewSet(ViewSet):
         # grading completed
         return Response(
             {
+                "message": "Grading completed successfully.",
                 "submission_id": submission.id,
                 "exam_id": submission.exam_id,
                 "student_id": submission.student_id,
                 "status": submission.status,
                 "submitted_at": submission.submitted_at,
                 "graded_at": submission.graded_at,
-                "score": submission.score,
-                "max_score": submission.grading_details.get("max_score"),
+                "user_score": submission.score,
+                "total_marks": submission.grading_details.get("total_marks"),
                 "grading_details": submission.grading_details,
-                "answers": [
-                    {
-                        "question_id": ans.question_id,
-                        "selected_choice_id": ans.selected_choice_id,
-                        "answer_text": ans.answer_text,
-                        "score": ans.score,
-                        "feedback": ans.feedback,
-                    }
-                    for ans in submission.answers.all()
-                ],
+                
             },
             status=status.HTTP_200_OK
         )
@@ -574,6 +567,8 @@ class ExamViewSet(ViewSet):
 
         return Response({
             "submission_id": submission.id,
+            "started_at": submission.started_at,
+            "ends_at": submission.exam.end_at,
             "message": "Exam started. Proceed to answer questions.",
             "total_questions": exam.questions.count(),
             "questions": serializer.data.get("questions", [])
@@ -614,7 +609,11 @@ class ExamViewSet(ViewSet):
 
         # async grading trigger
         from .task import grade_submission_async
-        asyncio.create_task(grade_submission_async(submission.id))
+        Thread(
+            target=grade_submission_async,
+            args=(submission.id,),
+            daemon=True
+        ).start()
 
         return Response({
             "submission_id": submission.id,
