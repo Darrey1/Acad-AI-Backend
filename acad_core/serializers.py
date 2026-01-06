@@ -303,7 +303,8 @@ class SubmissionCreateSerializer(serializers.Serializer):
                 student=student,
                 exam=exam,
                 started_at=validated_data.get('started_at'),
-                status=Submission.Status.PENDING
+                status=Submission.Status.SUBMITTED,
+                submitted_at=timezone.now()
             )
 
             answers_bulk = []
@@ -316,31 +317,9 @@ class SubmissionCreateSerializer(serializers.Serializer):
                 )
                 answers_bulk.append(answer)
             Answer.objects.bulk_create(answers_bulk)
-            
-            # trigger grading
-            from .services import grade_submission
-            grade_result = grade_submission(submission.id)
-            submission_id = submission.id
-            # grade_result is dict with overall_score, per_question
-            submission.score = grade_result.get('score')
-            submission.grading_details = grade_result
-            submission.status = Submission.Status.GRADED
-            submission.graded_at = timezone.now()
-            submission.save(update_fields=['score', 'grading_details', 'status', 'graded_at'])
 
-            data = {
-                'submission_id': submission_id,
-                "message": "Exam submitted your score will be available shortly.",
-                'exam_id': exam.id,
-                'student_id': student.id,
-                'submitted_at': submission.submitted_at,
-                'score': submission.score,
-                'max_score': round(grade_result.get('max_score', 0), 2),
-                'overall_score': f'{submission.score} / {round(grade_result.get("max_score", 0), 2)}',
-                **submission.grading_details,
-            }
+        return submission
 
-            return data
 
 
 

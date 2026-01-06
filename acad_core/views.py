@@ -1,3 +1,4 @@
+import asyncio
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView
@@ -491,42 +492,63 @@ class ExamViewSet(ViewSet):
 
         data.update({
             "total_questions": exam.questions.count(),
-            "message": f"{exam.course.upper()}, send POST request to start endpoint to begin the exam."
+            "message": f"{exam.course.upper()} exam details retrieved successfully.",
+            "developer_note": "Questions are not included, Send POST request to start endpoint to begin the exam."
         })
 
         return Response(data)
+    
+
 
     @action(detail=True, methods=["get"], url_path="results", url_name="exam-results")
     def results(self, request, pk=None):
         """
-        API view to retrieve results of a specific exam.
+        Retrieve the authenticated student's result for a given exam.
         """
         submission = get_object_or_404(
-                Submission,
-                exam_id=pk,
-                student=request.user
+            Submission,
+            exam_id=pk,
+            student=request.user
+        )
+
+        # grading still in progress
+        if submission.status != Submission.Status.GRADED:
+            return Response(
+                {
+                    "submission_id": submission.id,
+                    "exam_id": submission.exam_id,
+                    "status": submission.status,
+                    "message": "Grading in progress. Please check back shortly."
+                },
+                status=status.HTTP_202_ACCEPTED
             )
 
+        # grading completed
+        return Response(
+            {
+                "submission_id": submission.id,
+                "exam_id": submission.exam_id,
+                "student_id": submission.student_id,
+                "status": submission.status,
+                "submitted_at": submission.submitted_at,
+                "graded_at": submission.graded_at,
+                "score": submission.score,
+                "max_score": submission.grading_details.get("max_score"),
+                "grading_details": submission.grading_details,
+                "answers": [
+                    {
+                        "question_id": ans.question_id,
+                        "selected_choice_id": ans.selected_choice_id,
+                        "answer_text": ans.answer_text,
+                        "score": ans.score,
+                        "feedback": ans.feedback,
+                    }
+                    for ans in submission.answers.all()
+                ],
+            },
+            status=status.HTTP_200_OK
+        )
 
-        return Response({
-            'submission_id': submission.id,
-            'exam_id': submission.exam_id,
-            'student_id': submission.student_id,
-            'status': submission.status,
-            'submitted_at': submission.submitted_at,
-            'score': submission.score,
-            'grading_details': submission.grading_details,
-            'answers': [
-                {
-                    'question_id': ans.question_id,
-                    'selected_choice_id': ans.selected_choice_id,
-                    'answer_text': ans.answer_text,
-                    'score': ans.score,
-                    'feedback': ans.feedback
-                }
-                for ans in submission.answers.all()
-            ]
-        })
     
 
     # Start exam
@@ -544,6 +566,7 @@ class ExamViewSet(ViewSet):
         submission, _ = Submission.objects.get_or_create(
             student=request.user,
             exam=exam,
+            status=Submission.Status.PENDING,
             defaults={"started_at": timezone.now()}
         )
 
@@ -587,8 +610,17 @@ class ExamViewSet(ViewSet):
         )
         serializer.is_valid(raise_exception=True)
         submission = serializer.save()
+        print("Submission saved, triggering async grading...", submission.id, submission.status)
 
-        return Response(submission, status=status.HTTP_201_CREATED)
+        # async grading trigger
+        from .task import grade_submission_async
+        asyncio.create_task(grade_submission_async(submission.id))
+
+        return Response({
+            "submission_id": submission.id,
+            "status": submission.status,
+            "message": "Exam submitted. Grading in progress."
+        }, status=status.HTTP_201_CREATED)
 
 
 

@@ -46,12 +46,13 @@ This project simulates the core functionality of an academic assessment engine, 
   1. UI displays all available exams (ENDPOINT: GET /api/user/exams/)  ----> PAGE 1
   2. Student selects the exam they want to take 
   3. UI displays exam details with Start button (ENDPOINT: GET /api/user/exams/{exam_id}/) ----> PAGE 2
-  4. Student clicks Start button (ENDPOINT: POST /api/user/exams/{exam_id}/start/) ----> PAGE 3
-  5. Frontend fetches questions from backend and randomizes them
-  6. Student answers questions one by one (Next button) ----> PAGE 4
-  7. Submit button posts answers for grading (ENDPOINT: POST /api/user/exams/{exam_id}/submit/) ----> PAGE 5
-  8. Upon submission, backend grades answers asynchronously and return it immediately
-  9. Frontend use timer to wait and displays score and feedback
+  4. Student clicks Start button 
+  5. Frontend fetches questions from backend and randomizes them (ENDPOINT: POST /api/user/exams/{exam_id}/start/) ----> PAGE 3
+  6. Student answers questions one by one (Next/Previous button to navigate each question) ----> PAGE 4
+  7. Student clicks Submit button to submit answers for grading (ENDPOINT: POST /api/user/exams/{exam_id}/submit/) ----> PAGE 5
+  8. Backend immediately stores the submission and returns a response with submission status = SUBMITTED, while grading runs asynchronously in the background
+  9. Frontend displays a waiting state (timer / loading screen) while grading is in progress
+  10.Frontend periodically checks if grading is completed (ENDPOINT: GET /api/user/exams/{exam_id}/results/)
 
 
   You can retrieve student results using the following endpoint anytime:- **GET /api/user/exams/{exam_id}/results/**
